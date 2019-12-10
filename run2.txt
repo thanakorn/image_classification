@@ -1,0 +1,9 @@
+0.jpg Office
+1.jpg Office
+2.jpg OpenCountry
+3.jpg Office
+4.jpg Mountain
+5.jpg livingroom
+6.jpg Suburb
+7.jpg bedroom
+8.jpg industrial

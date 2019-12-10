@@ -4,9 +4,11 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.image as mimg
+import os
 sys.path.append('src')
 from utilities import load_training_images, load_testing_images
 from sklearn.cluster import KMeans
+from sklearn.svm import SVC
 import random
 from sklearn.preprocessing import MinMaxScaler
 %matplotlib inline
@@ -80,10 +82,14 @@ def build_img_histogram(img, kmeans):
     histogram = np.histogram(cluster_predict, bins=range(len(kmeans.cluster_centers_) + 1))[0]
     return histogram
 
-# %% Generate historgrams of all images
+# %% Generate historgrams of train and test images
 train_img_histograms = np.zeros((len(train_images), K))
 for i in range(len(train_images)):
     train_img_histograms[i] = build_img_histogram(train_images[i], kmeans)
+
+test_img_histograms = np.zeros((len(test_images), K))
+for i in range(len(test_images)):
+    test_img_histograms[i] = build_img_histogram(test_images[i], kmeans)
 
 # %% Sample histogram
 fig, ax = plt.subplots(nrows=1, ncols=4, figsize=(18,3))
@@ -110,4 +116,19 @@ for i in range(min(4,len(hist_4))):
     ax[i].set_title(class_names[train_image_classes[4] - 1])
     ax[i].bar(range(0, K), hist_4[i])
 
-# %%
+# %% Build classifiers
+classifiers = SVC()
+classifiers.fit(train_img_histograms, train_image_classes)
+predicted = classifiers.predict(test_img_histograms)
+
+# %% Classify test images
+if os.path.exists('run2.txt'):
+    os.remove('run2.txt')
+f = open('run2.txt', 'x')
+for i in range(len(test_img_histograms)):
+    plt.figure()
+    img_name = class_names[predicted[i] - 1]
+    plt.title(img_name)
+    plt.imshow(test_images[i], cmap='gray')
+    f = open('run2.txt', 'a')
+    f.write(f'{i}.jpg {img_name}' + '\n')
