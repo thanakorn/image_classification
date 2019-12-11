@@ -2,8 +2,6 @@ import os.path as osp
 
 import cv2
 import numpy as np
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 
 from src.utilities import load_images_from_directory, load_images_from_folder
@@ -34,7 +32,6 @@ testing_path = osp.join(data_path, 'testing')
 (train_images, train_image_classes) = load_images_from_directory(training_path)
 (test_images, file_names) = load_images_from_folder(testing_path)
 
-
 train_image_tiny = []
 for train_image in train_images:
     tiny_image = get_tiny_image_feature(train_image)
@@ -53,9 +50,11 @@ model = KNeighborsClassifier(n_neighbors=7)
 model.fit(train_image_tiny, train_image_classes)
 prediction_results = model.predict(test_images_tiny)
 
-for i in range(prediction_results.size):
-    print(file_names[i], prediction_results[i])
-
+output_path = osp.join('..', 'run1.txt')
+with open(output_path, 'a') as the_file:
+    for i in range(prediction_results.size):
+        text = file_names[i] + ' ' + prediction_results[i] + '\n'
+        the_file.write(text)
 
 # Run K-fold cross validation to find optimal number of K
 # Shuffle data

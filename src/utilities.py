@@ -1,3 +1,4 @@
+import fnmatch
 import os
 
 import cv2
@@ -41,7 +42,9 @@ def load_images_from_directory(dir):
 def load_images_from_folder(folder):
     images = []
     file_names = []
-    for file in os.listdir(folder):
+    file_list = fnmatch.filter(os.listdir(folder), '*.jpg')
+    sorted_file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0]))
+    for file in sorted_file_list:
         img = cv2.imread(os.path.join(folder, file), cv2.IMREAD_GRAYSCALE)
         if img is not None:
             file_names.append(file)
