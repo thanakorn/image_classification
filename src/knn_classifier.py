@@ -8,6 +8,9 @@ from src.utilities import load_images_from_directory, load_images_from_folder
 
 
 def get_tiny_image_feature(image, size=(16, 16)):
+    """ Create tiny image vector by (1) crop the image center (2) resize the image
+        (3) flatten into 1d vector (4) normalize the vector to be zero mean and unit variance
+    """
     crop_image = crop_center(image)
     tiny_image_vector = cv2.resize(crop_image, size).flatten()
     normed_vector = (tiny_image_vector - tiny_image_vector.mean(axis=0)) / tiny_image_vector.std(axis=0)
@@ -15,6 +18,9 @@ def get_tiny_image_feature(image, size=(16, 16)):
 
 
 def crop_center(image):
+    """ Crop the image to be square image about the center.
+        If the image is already square, return original image.
+    """
     y, x = image.shape
     if y == x:
         return image
@@ -25,13 +31,16 @@ def crop_center(image):
         return image[start_y:start_y + crop_size, start_x:start_x + crop_size]
 
 
+# Data path
 data_path = osp.join('..', 'resources')
 training_path = osp.join(data_path, 'training')
 testing_path = osp.join(data_path, 'testing')
 
+# Loading image from path
 (train_images, train_image_classes) = load_images_from_directory(training_path)
 (test_images, file_names) = load_images_from_folder(testing_path)
 
+# Prepare Tiny image feature vector for both testing and training data
 train_image_tiny = []
 for train_image in train_images:
     tiny_image = get_tiny_image_feature(train_image)
@@ -46,6 +55,7 @@ train_image_tiny = np.array(train_image_tiny)
 train_image_classes = np.array(train_image_classes)
 test_images_tiny = np.array(test_images_tiny)
 
+# Predict image class using K-Nearest neighbor
 model = KNeighborsClassifier(n_neighbors=7)
 model.fit(train_image_tiny, train_image_classes)
 prediction_results = model.predict(test_images_tiny)

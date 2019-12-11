@@ -42,6 +42,7 @@ def load_images_from_directory(dir):
 def load_images_from_folder(folder):
     images = []
     file_names = []
+    # filter only .jpg file and sort according to image number
     file_list = fnmatch.filter(os.listdir(folder), '*.jpg')
     sorted_file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0]))
     for file in sorted_file_list:
