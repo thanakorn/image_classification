@@ -2,6 +2,8 @@ import os.path as osp
 
 import cv2
 import numpy as np
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 
 from src.utilities import load_images_from_directory, load_images_from_folder
@@ -68,17 +70,17 @@ with open(output_path, 'a') as the_file:
 
 # Run K-fold cross validation to find optimal number of K
 # Shuffle data
-# indices = np.arange(tiny_image_feature.shape[0])
+# indices = np.arange(train_image_tiny.shape[0])
 # np.random.shuffle(indices)
-# tiny_image_feature = tiny_image_feature[indices]
+# train_image_tiny = train_image_tiny[indices]
 # train_image_classes = train_image_classes[indices]
 #
 # splits = 10
 # scores = {}
 # k_list = range(1, 20)
 # kf = KFold(n_splits=splits)
-# for train_index, test_index in kf.split(tiny_image_feature):
-#     X_train, X_test, y_train, y_test = tiny_image_feature[train_index], tiny_image_feature[test_index], \
+# for train_index, test_index in kf.split(train_image_tiny):
+#     X_train, X_test, y_train, y_test = train_image_tiny[train_index], train_image_tiny[test_index], \
 #                                        train_image_classes[train_index], train_image_classes[test_index]
 #
 #     for k in k_list:
