@@ -5,11 +5,11 @@ import cv2
 
 
 def load_training_images():
-    return load_images_from_dir('resources/training')
+    return load_images_from_dir('/Users/mark/Projects/image_classification/resources/training')
 
 
 def load_testing_images():
-    return load_images_from_folder('resources/testing')
+    return load_images_from_folder('/Users/mark/Projects/image_classification/resources/testing')
 
 
 def load_images_from_dir(dir):
@@ -20,10 +20,11 @@ def load_images_from_dir(dir):
     for folder in os.listdir(dir):
         class_id += 1
         class_names.append(folder)
-        all_images, file_names = load_images_from_folder(os.path.join(dir, folder))
-        for img in all_images:
-            training_images.append(img)
-            training_image_classes.append(class_id)
+        if os.path.isdir(os.path.join(dir, folder)):
+            all_images, file_names = load_images_from_folder(os.path.join(dir, folder))
+            for img in all_images:
+                training_images.append(img)
+                training_image_classes.append(class_id)
     return training_images, training_image_classes, class_names
 
 
