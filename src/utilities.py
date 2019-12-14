@@ -15,7 +15,6 @@ def load_testing_images():
     testing_path = osp.join(data_path, 'testing')
     return load_images_from_folder(testing_path)
 
-
 def load_images_from_dir(dir):
     class_id = 0
     training_images = []
