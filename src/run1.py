@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 
-from src.utilities import load_images_from_directory, load_images_from_folder
+from utilities import load_images_from_directory, load_images_from_folder
 
 
 def get_tiny_image_feature(image, size=(16, 16)):

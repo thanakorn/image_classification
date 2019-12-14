@@ -16,7 +16,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, Normalizer
 from sklearn.model_selection import train_test_split, KFold
 from numpy import linalg as LA
 from sklearn.metrics import accuracy_score
-%matplotlib inline
+# %matplotlib inline
 
 # %% Extract features
 PATCH_SIZE = (8,8)
