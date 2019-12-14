@@ -5,6 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.image as mimg
 import os
+import os.path as osp
 sys.path.append('src')
 from utilities import load_training_images, load_testing_images
 from sklearn.cluster import KMeans
@@ -22,15 +23,6 @@ from sklearn.metrics import accuracy_score
 PATCH_SIZE = (8,8)
 MAX_PATCH = 256
 SAMPLING_RATE = 4
-# def extract_patches(img, patch_size):
-#     x_size = patch_size[1]
-#     y_size = patch_size[0]
-#     patches = []
-#     for i in range(int(img.shape[0] / y_size)):
-#         for j in range(int(img.shape[1] / x_size)):
-#             patch = img[i * y_size:(i + 1) * y_size , j * x_size:(j + 1) * x_size]
-#             patches.append(patch)
-#     return patches
 
 def extract_features(img):
     patches = image.extract_patches_2d(img, PATCH_SIZE, max_patches=MAX_PATCH, random_state=42)
@@ -46,7 +38,7 @@ def extract_features(img):
 
 # %% Load images
 (all_train_images, all_train_image_labels, class_names) = load_training_images()
-test_images = load_testing_images()
+test_images, filenames = load_testing_images()
 
 train_images = all_train_images
 train_image_labels = all_train_image_labels
@@ -76,12 +68,6 @@ for i in range(NUM_CLASS):
         ax[i][j].set_xticks([],[])
         ax[i][j].set_yticks([],[])
 
-# %% Verified image sample
-for i in np.random.randint(low=0, high=len(verified_images), size = 10):
-    plt.figure()
-    plt.title(class_names[verified_image_classes[i] - 1])
-    plt.imshow(verified_images[i], cmap='gray')
-
 # %% Test image sample
 for i in np.random.randint(low=0, high=len(test_images), size = 10):
     plt.figure()
@@ -104,8 +90,7 @@ for img in train_images:
         train_feature_vectors = np.vstack((train_feature_vectors, feature_vectors))
 
 # %% Clustering
-K = 500 # For testing
-# kmeans = KMeans(K).fit(train_feature_vectors)
+K = 700 
 kmeans = MiniBatchKMeans(K, init_size=3*K).fit(train_feature_vectors)
 codewords = kmeans.cluster_centers_
 labels = kmeans.labels_
@@ -137,13 +122,6 @@ for i in range(NUM_CLASS):
         ax[j].set_title(class_names[i])
         ax[j].bar(range(0, K), hist[j])
 
-# %% Sample verified histogram
-for i in np.random.randint(0, len(verified_images), size=10):
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,3))
-    ax[0].set_title(class_names[verified_image_classes[i] - 1])
-    ax[0].imshow(verified_images[i], cmap='gray')
-    ax[1].bar(range(0, K), verified_img_histograms[i])
-
 # %% Build SVM classifiers
 classifiers = LinearSVC(random_state=0, tol=1e-3, loss='hinge', C=5)
 classifiers.fit(train_img_histograms, train_image_labels)
@@ -167,27 +145,9 @@ for i in range(len(train_images)):
 accuracy = (float)(correct) / (float)(len(train_images))
 print('Train Accuracy : ', accuracy)
 
-# %% Classify verified images
-for i in np.random.randint(len(verified_images), size=20):
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(12,3))
-    actual = class_names[verified_image_classes[i] - 1]
-    predict = class_names[verified_predict[i] - 1]
-    ax[0].set_title(f'{actual}(A) {predict}(P)')
-    ax[0].imshow(verified_images[i], cmap='gray')
-    ax[1].bar(range(0,K), verified_img_histograms[i])
-
-correct = 0
-for i in range(len(verified_images)):
-    actual = verified_image_classes[i]
-    predict = verified_predict[i]
-    if(actual == predict): correct += 1
-
-accuracy = (float)(correct) / (float)(len(train_images))
-print('Verified Accuracy : ', accuracy)
-
 # %% KFold Cross Validation to find proper K for KMeans
 kfold = KFold(n_splits=5,shuffle=True)
-NUM_WORDS = 700
+NUM_WORDS = 500
 all_train_images = np.asarray(all_train_images)
 all_train_image_classes = np.asarray(all_train_image_labels)
 for train_indices, verified_indices in kfold.split(all_train_images):
@@ -244,12 +204,14 @@ for i in np.random.randint(0, len(test_images), size = 30):
     ax.set_title(f'{predict}')
     ax.imshow(test_images[i], cmap='gray')
 
-# %%
-if os.path.exists('run2.txt'): os.remove('run2.txt')
-f = open('run2.txt', 'x')
+# %% Write result file
+result_file = '../run2.txt'
+if os.path.exists(result_file): os.remove(result_file)
+f = open(result_file, 'x')
 for i in range(len(test_images)):
     predicted_img_name = class_names[test_predicted[i] - 1]
-    f = open('run2.txt', 'a')
-    f.write(f'{i}.jpg {predicted_img_name}' + '\n')
+    f = open(result_file, 'a')
+    f.write(f'{filenames[i]} {predicted_img_name}' + '\n')
+f.close()
 
 # %%

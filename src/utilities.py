@@ -1,15 +1,19 @@
 import fnmatch
 import os
-
+import os.path as osp
 import cv2
 
 
 def load_training_images():
-    return load_images_from_dir('/Users/mark/Projects/image_classification/resources/training')
+    data_path = osp.join('..', 'resources')
+    training_path = osp.join(data_path, 'training')
+    return load_images_from_dir(training_path)
 
 
 def load_testing_images():
-    return load_images_from_folder('/Users/mark/Projects/image_classification/resources/testing')
+    data_path = osp.join('..', 'resources')
+    testing_path = osp.join(data_path, 'testing')
+    return load_images_from_folder(testing_path)
 
 
 def load_images_from_dir(dir):
