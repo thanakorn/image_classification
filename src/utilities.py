@@ -5,11 +5,11 @@ import cv2
 
 
 def load_training_images():
-    return load_images_from_dir('/Users/mark/Projects/image_classification/resources/training')
+    return load_images_from_dir('resources/training')
 
 
 def load_testing_images():
-    return load_images_from_folder('/Users/mark/Projects/image_classification/resources/testing')
+    return load_images_from_folder('resources/testing')
 
 
 def load_images_from_dir(dir):
