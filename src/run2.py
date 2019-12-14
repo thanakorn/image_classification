@@ -148,7 +148,7 @@ for i in np.random.randint(0, len(test_images), size=30):
     ax.imshow(test_images[i], cmap='gray')
 
 # %% Write result file
-result_file = '../run2_.txt'
+result_file = '../run2.txt'
 if os.path.exists(result_file): os.remove(result_file)
 f = open(result_file, 'x')
 for i in range(len(test_images)):
